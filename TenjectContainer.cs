@@ -9,6 +9,14 @@ namespace Te.DI
     {
         private readonly Dictionary<Type, object> _bindings = new();
 
+        public TenjectContainer(bool bindSelf = false)
+        {
+            if (bindSelf)
+            {
+                BindInstance(this);
+            }
+        }
+
         #region Bind
 
         public void BindInstance<TObjectType>(TObjectType instance) where TObjectType : class
@@ -142,7 +150,7 @@ namespace Te.DI
             {
                 throw new ArgumentException($"Can't inject methods for null instance of \"{type}\" type");
             }
-            
+
             var methods = type.GetRuntimeMethods().Where(methodInfo => methodInfo.IsDefined(InjectAttribute.Type));
             foreach (var method in methods)
             {
@@ -158,7 +166,7 @@ namespace Te.DI
             {
                 throw new ArgumentException($"Can't inject fields for null instance of \"{type}\" type");
             }
-            
+
             var fields = type.GetRuntimeFields().Where(fieldInfo => fieldInfo.IsDefined(InjectAttribute.Type));
             foreach (var field in fields)
             {
@@ -172,7 +180,7 @@ namespace Te.DI
             {
                 throw new ArgumentException($"Can't inject properties for null instance of \"{type}\" type");
             }
-            
+
             var properties = type
                 .GetRuntimeProperties()
                 .Where(propertyInfo => propertyInfo.CanWrite && propertyInfo.IsDefined(InjectAttribute.Type));
