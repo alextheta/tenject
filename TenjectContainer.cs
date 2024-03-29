@@ -36,12 +36,10 @@ namespace Te.DI
                 throw new ArgumentException($"Can't bind null instance to type \"{bindType}\"");
             }
 
-            if (_bindings.ContainsKey(bindType))
+            if (!_bindings.TryAdd(bindType, instance))
             {
                 throw new ArgumentException($"Type \"{bindType}\" is already bound");
             }
-
-            _bindings.Add(bindType, instance);
 
             ResolveInstance(instance, bindType);
         }
@@ -104,7 +102,7 @@ namespace Te.DI
 
         public object GetBinding(Type type)
         {
-            return _bindings.TryGetValue(type, out var instance) ? instance : null;
+            return _bindings.GetValueOrDefault(type);
         }
 
         #endregion
